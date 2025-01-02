@@ -206,17 +206,30 @@ public:
     {
         return accessLevel;
     }
+    int getcollegeID()
+    {
+        return collegeID;
+    }
 
 };
 
 class manager : public cardHolder
 {
     public:
-        void addUser(string name,int accesslevel)
+        void addUser(string name,int accesslevel, int id)
         {
             fstream userfile;
             userfile.open("user.txt", ios::app);
-            userfile << name << " "<< accesslevel <<"\n";
+            userfile << name << " "<< accesslevel << " " << id <<"\n";
+            userfile.close();
+
+
+        }
+        void addUser(string name, int accesslevel)
+        {
+            fstream userfile;
+            userfile.open("user.txt", ios::app);
+            userfile << name << " " << accesslevel << "\n";
             userfile.close();
 
 
@@ -245,18 +258,82 @@ class manager : public cardHolder
 };
 class student : public cardHolder
 {  
+public:
+    student();
+    student(string fname, string sname, int accesslevel, int colID);
+    
 };
+student :: student(string fname, string sname, int accesslevel, int colID)
+{
+    setName(fname, sname);
+    setAccessLevel(accesslevel);
+    setCollegeID(colID);
+}
 
 class staffMember : public cardHolder
-{};
+{
+public:
+    staffMember();
+    staffMember(string fname, string sname, int accesslevel);
+    
+};
+staffMember :: staffMember(string fname, string sname, int accesslevel)
+{
+    setName(fname, sname);
+    setAccessLevel(accesslevel);
+}
+
 class visitor : public cardHolder
-{};
+{
+public:
+    visitor();
+    visitor(string fname, string sname, int accesslevel);
+    
+};
+visitor::visitor(string fname, string sname, int accesslevel)
+{
+    setName(fname, sname);
+    setAccessLevel(accesslevel);
+}
 class cleaner : public cardHolder
-{};
+{
+public:
+    cleaner();
+    cleaner(string fname, string sname, int accesslevel);
+    
+};
+cleaner :: cleaner(string fname, string sname, int accesslevel)
+{
+    setName(fname, sname);
+    setAccessLevel(accesslevel);
+}
 class security : public cardHolder
-{};
+{
+public:
+    security();
+    security(string fname, string sname, int accesslevel);
+   
+};
+security:: security(string fname, string sname, int accesslevel)
+{
+    setName(fname, sname);
+    setAccessLevel(accesslevel);
+}
+
 class EResponer : public cardHolder
-{};
+{
+public:
+    EResponer();
+    EResponer(string fname, string sname, int accesslevel);
+};
+EResponer::EResponer(string fname, string sname, int accesslevel)
+{
+    setName(fname, sname);
+    setAccessLevel(accesslevel);
+}
+
+
+
 void gotoxy(int x, int y)         //define gotoxy function
 {
     static HANDLE hStdout = NULL;
@@ -287,10 +364,78 @@ void clrscr(void) //clear screen function
 
 vector <room> rooms[MAXROOMS];
 vector <cardHolder> cards[MAXUSERS];
+fstream userfile;
 fstream roomfile;
+void refreshusers() 
+{
 
+    userfile.open("user.txt");
 
+        if (userfile.is_open())
+        {
+            string tempfname;
+            string tempsname;
+            int tempaccess;
+            int tempcid;
+
+            do
+            {
+                userfile >> tempfname;
+                userfile >> tempsname;
+                userfile >> tempaccess;
+                userfile >> tempcid;
+
+                int currentcase = tempaccess;
+                if (currentcase == 1)
+                {
+
+                    student student(tempfname, tempsname, tempaccess, tempcid);
+
+                }
+                else if (currentcase == 2)
+                {
+                    staffMember staffMember(tempfname, tempsname, tempaccess);
+                    cards->push_back(staffMember);
+
+                }
+                else if (currentcase == 3)
+                {
+                     cleaner cleaner(tempfname, tempsname, tempaccess);
+                    cards->push_back(cleaner);
+
+                }
+                else if (currentcase == 4)
+                {
+                    security security(tempfname, tempsname, tempaccess);
+                    cards->push_back(security);
+
+                }
+                else if (currentcase == 5)
+                {
+                    EResponer EResponer(tempfname, tempsname, tempaccess);
+                    cards->push_back(EResponer);
+                }
+                else if (currentcase == 6)
+                {
+                    visitor visitor(tempfname, tempsname, tempaccess);
+                    cards->push_back(visitor);
+                }
+
+            } while (!userfile.eof());
+            userfile.close(); //close file
+
+            
+        }
+    else
+    {
+        cerr << "File not found";
+        _getch();
+        }
+}
+
+ 
 void refreshfile() {
+   
     roomfile.open("rooms.txt"); // open file
 
     if (roomfile.is_open())
@@ -367,25 +512,26 @@ void writerooms(string x,int y)
 string login;
 
 manager mainman;
-student stu;
-staffMember staff;
-cleaner cClean;
-security secGuard;
-EResponer emerGuest;
-visitor guest;
+student stu("", "", 0, 0);
+staffMember staff("", "", 0);
+cleaner cClean("", "", 0);
+security secGuard("", "", 0);
+EResponer emerGuest("", "", 0);
+visitor guest("", "", 0);
 
 
 int roomtype = 0;
 string roomname;
 int type;
 string roomlookup;
+ 
 
 int main()
 { 
-
-
+    srand(time(0));
+    int newcollegeID = rand() % 900000 + 100000;// generate random 6 digit number
     refreshfile();
-    mainman.setName("Phil","Monk");
+    mainman.setName("Phil","Monk"); // first name is login
 
     
 
@@ -444,7 +590,9 @@ int main()
                             cin >> tempfname >> tempsname;
                             stu.setName(tempfname, tempsname);
                             stu.setAccessLevel(choice);
-                            mainman.addUser(stu.getfullName(), stu.getAccessLevel());
+                            stu.setCollegeID(newcollegeID);
+                            mainman.addUser(stu.getfullName(), stu.getAccessLevel(),stu.getcollegeID());
+                            cards->push_back(stu);
                             break;
 
                         case 2:
@@ -453,6 +601,7 @@ int main()
                             staff.setName(tempfname, tempsname);
                             staff.setAccessLevel(choice);
                             mainman.addUser(staff.getfullName(), staff.getAccessLevel());
+                            cards->push_back(staff);
                             break;
 
                         case 3:
@@ -461,6 +610,7 @@ int main()
                             cClean.setName(tempfname, tempsname);
                             cClean.setAccessLevel(choice);
                             mainman.addUser(cClean.getfullName(), cClean.getAccessLevel());
+                            cards->push_back(cClean);
                             break;
 
                         case 4:
@@ -469,6 +619,7 @@ int main()
                             secGuard.setName(tempfname, tempsname);
                             secGuard.setAccessLevel(choice);
                             mainman.addUser(secGuard.getfullName(), secGuard.getAccessLevel());
+                            cards->push_back(secGuard);
                             break;
                         case 5:
                             cout << "enter new user's name: ";
@@ -476,6 +627,7 @@ int main()
                             emerGuest.setName(tempfname, tempsname);
                             emerGuest.setAccessLevel(choice);
                             mainman.addUser(emerGuest.getfullName(), emerGuest.getAccessLevel());
+                            cards->push_back(emerGuest);
                             break;
                         case 6:
                             cout << "enter new user's name: ";
