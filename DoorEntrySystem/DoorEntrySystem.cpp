@@ -19,7 +19,7 @@ using namespace std;
 #define MAXUSERS 100
 
 
-//observer setup
+//observer setup (Not working)
 class Observer
 {
 public:
@@ -41,8 +41,6 @@ public:
         for (Observer* observer : observers)
         {
             observer->update(emstate);
-            
-
         }
     }
     void setstate(BOOL state)
@@ -77,7 +75,7 @@ public:
     {
         roomName = x;
     }
-    bool updateRoomEmerStat()
+    void updateRoomEmerStat()
     {
         if (inEmergency == false)
         {
@@ -86,13 +84,13 @@ public:
         else
             inEmergency = false;
     }
-    void roomAccessed()
-    {};
 
     bool isEmergency()
     {
         if (inEmergency == true)
             cout << "room in emergency";
+        _getch();
+        return inEmergency;
     }
 
     bool allClear()
@@ -100,7 +98,7 @@ public:
 
     void grantAccess()
     {
-        cout << "Access to " << getroomName();
+        cout << "Access to " << getroomName() << " Granted";
     }
     string getroomName()
     {
@@ -429,7 +427,7 @@ emergencystate ems;
 void refreshusers()
 {
 
-    userfile.open("user.txt");
+    userfile.open("ID_Card_List.txt");
 
     if (userfile.is_open())
     {
@@ -485,11 +483,14 @@ void refreshusers()
             currentcase = 0;
         } while (!userfile.eof());
         userfile.close(); //close file
-        for (int j = 0; j < cards->size(); j++)
+        if (DEBUG == 1)
         {
-            cout << cards->at(j).getName() << cards->at(j).getcollegeID()<<endl;
+            for (int j = 0; j < cards->size(); j++)
+            {
+                cout << cards->at(j).getName() << cards->at(j).getcollegeID() << endl;
+            }
+            _getch();
         }
-        _getch();
     }
     else
     {
@@ -544,11 +545,15 @@ void refreshfile() {
 
         } while (!roomfile.eof());
         roomfile.close(); //close file
-        for (int i = 0; i < rooms->size(); i++)
+
+        if (DEBUG == 1) 
         {
-            cout << rooms->at(i).getroomName() << " " << rooms->at(i).getRoomAccess() << endl;
+            for (int i = 0; i < rooms->size(); i++)
+            {
+                cout << rooms->at(i).getroomName() << " " << rooms->at(i).getRoomAccess() << endl;
+            }
+            _getch();
         }
-        _getch();
     }
     else
     {
@@ -584,18 +589,31 @@ string currentDate()
     return string(buffer);
 }
 
-void writeAccesslog(string roomname, string accessedby, string result)
+void writeAccesslog(string roomname, string accessedby, string result, bool state)
 {
     string date = currentDate();
     string logfileName = "room_access_log_" + date + ".txt";
+
+    string emstate;
+    if (state == true)
+    {
+        emstate = " Emergency";
+    }
+    else
+    {
+        emstate = " All clear";
+    }
 
     fstream log;
     log.open(logfileName, ios_base::app);
     if (log.is_open())
     {
-        log << "Room: " << roomname << "Accessed by: " << accessedby << "Access: " << result << endl;
-        cout << "Log has been written";
-        _getch();
+        log << "Room: " << roomname << " Accessed by: " << accessedby << " on " << currentDate() << " Access: " << result << " State:" << emstate << endl;
+        if (DEBUG == 1)
+        {
+            cout << "Log has been written";
+            _getch();
+        }
         log.close();
     }
     else
@@ -605,7 +623,7 @@ void writeAccesslog(string roomname, string accessedby, string result)
 }
 
 string login;
-
+// objects
 manager mainman;
 student stu("", "", 0, 0);
 staffMember staff("", "", 0,0);
@@ -637,7 +655,7 @@ int main()
 
     
     do
-    {
+    { HOME:
         clrscr();
         cout << "welcome to the college door entry system system" << endl;
         cout << "Select function: (1) Enter room, (2) Login to setup or (0) to exit: ";
@@ -648,34 +666,45 @@ int main()
             cout << "Enter college id";
             int idattempt;
             cin >> idattempt;
+            bool idfound = false;
             for (int num = 0; num < cards->size(); num++)
             {
-                cout << endl << idattempt;
+                //cout << endl << idattempt;
                 int currentcard = cards->at(num).getcollegeID();
                 while (idattempt == currentcard)
                 {
+                    idfound = true;
                     cout << "Enter room number: (ks225)";
                     cin >> roomlookup;
+
+                    bool roomfound = false;
                     for (int i = 0; i < rooms->size(); i++)
                     {
+
+                        string currentRoom = rooms->at(i).getroomName();                  
                         
-                        string currentRoom = rooms->at(i).getroomName();
+                       
                         if (roomlookup == currentRoom)
                         {
-                            cout << "loop " << i;
-                            if (cards->at(num).getAccessLevel() >= rooms->at(i).getRoomAccess())
+                            bool currentstate = rooms->at(i).isEmergency();
+                            
+
+                            roomfound = true;
+                            //cout << "loop " << i;
+                           
+                             if(currentstate == true && cards->at(num).getAccessLevel() != 6 || currentstate == false && cards->at(num).getAccessLevel() == 6)
                             {
-                                cout << "Access granted to " << currentRoom;
-                                writeAccesslog(roomlookup, cards->at(num).getfullName(), "Granted");
+                                cout << "Access denied";
+                                writeAccesslog(roomlookup, cards->at(num).getfullName(), " Denied ",rooms->at(i).isEmergency());
                                 idattempt = 0;
                                 roomlookup = "";
                                 _getch();
-                                break;
+                                goto HOME;
                             }
-                            else
+                             else if (cards->at(num).getAccessLevel() >= rooms->at(i).getRoomAccess())
                             {
-                                cout << "Access denied";
-                                writeAccesslog(roomlookup, cards->at(num).getfullName(), "Denied");
+                                rooms->at(i).grantAccess();
+                                writeAccesslog(roomlookup, cards->at(num).getfullName(), " Granted ",rooms->at(i).isEmergency());
                                 idattempt = 0;
                                 roomlookup = "";
                                 _getch();
@@ -686,23 +715,42 @@ int main()
                         }
                         else
                             continue;
-                                cout << "Room does not exist";
-                                _getch();
-                                break;
-                            
+
+
                     }
-                        
+                    //room not found
+                    if (!roomfound)
+                    {
+                        try {
+                            throw runtime_error("Room not found");
+                        }
+                        catch (const runtime_error& e)
+                        {
+                            cerr << "Caught exception: " << e.what() << endl;
+                        }
+                    }
+
+
                 }
                 
-                    
             }
-           
-            
-            
-        }
-        if (type == 2) // setup new rooms to txt file 
-        {
-            clrscr();
+                // id not found
+                if (!idfound)
+                {
+                    try {
+                        throw runtime_error("ID not found");
+                    }
+                    catch (const runtime_error& e)
+                    {
+                        cerr << "Caught exception: " << e.what() << endl;
+                        _getch();
+                    }
+                }
+        }           
+    
+        else if (type == 2) // setup new rooms, students or set emergency state to txt file 
+            {
+             clrscr();
             cout << "Enter login name: " << endl;
             cin >> login;
             if (login == mainman.getName())  // login required
@@ -713,7 +761,7 @@ int main()
                     int choice;
                     string tempfname;
                     string tempsname;
-                    cout << "1 user setup, 2 emergency, 3 room setup";
+                    cout << "1 user setup, 2 emergency, 3 room setup, 0 to go back";
                     cin >> choice;
                     clrscr();
                     //new cardholder
@@ -765,39 +813,50 @@ int main()
                         case 5:
                             cout << "enter new user's name: ";
                             cin >> tempfname >> tempsname;
+                            guest.setName(tempfname, tempsname);
+                            guest.setAccessLevel(choice);
+                            guest.setCollegeID(newcollegeID);
+                            mainman.addUser(guest.getfullName(), guest.getAccessLevel(),guest.getcollegeID());
+                            break;
+                        case 6:
+                            cout << "enter new user's name: ";
+                            cin >> tempfname >> tempsname;
                             emerGuest.setName(tempfname, tempsname);
                             emerGuest.setAccessLevel(choice);
                             emerGuest.setCollegeID(1);
                             mainman.addUser(emerGuest.getfullName(), emerGuest.getAccessLevel(),emerGuest.getcollegeID());
                             cards->push_back(emerGuest);
                             break;
-                        case 6:
-                            cout << "enter new user's name: ";
-                            cin >> tempfname >> tempsname;
-                            guest.setName(tempfname, tempsname);
-                            guest.setAccessLevel(choice);
-                            guest.setCollegeID(newcollegeID);
-                            mainman.addUser(guest.getfullName(), guest.getAccessLevel(),guest.getcollegeID());
-                            break;
+
                         }
                     }
                     //emergency state
                     else if (choice == 2)
                     {
                         char emergency;
-                        cout << "Is there an emergency? Y/N";
+                        cout << "Change emergency State? Y/N";
                         cin >> emergency;
                         //set emergency state
+                        if (emergency == 'y')
+                            for (int emr = 0; emr < rooms->size(); emr++)
+                            {
+                                rooms->at(emr).updateRoomEmerStat();
+                            }
+                        else if (emergency == 'n')
+                            goto HOME;
+
+
+                        /*//trying to use observer but unable to get it to work
                         if (emergency == 'y')
                         ems.setstate(TRUE);
                         else if (emergency == 'n')
                             ems.setstate(FALSE);
-                            break;
+                            break;*/
                     }  
                     //new room
                     else if (choice == 3)
                     {
-                        cout << "enter room type: ";
+                        cout << "enter room type lecturehall (1), Staffroom (2), Teachingroom (3),Secureroom (4) Go back (0): ";
                         cin >> roomtype; // roomtype will determine which kind of room will be created
 
                         if (roomtype == 1)
@@ -805,7 +864,6 @@ int main()
                             cout << "enter room name: ";
                             cin >> roomname;
                             lectureHall lecturehall(roomname, roomtype);
-
                             rooms->push_back(lecturehall);
                             writerooms(roomname, roomtype);
                             if (DEBUG == 1)

@@ -1,4 +1,5 @@
-Room: ks220Accessed by: Ava ThompsonAccess: Granted
-Room: ks220Accessed by: Ava ThompsonAccess: Granted
-Room: ks220Accessed by: Ava ThompsonAccess: Granted
-Room: ks220Accessed by: Ava ThompsonAccess: Granted
+Room: ks225Accessed by: Emergency responder on 2025-01-03 Access: Granted State Emergency
+Room: ks220Accessed by: Emergency responder on 2025-01-03 Access: Granted State Emergency
+Room: ks220 Accessed by: Ava Thompson on 2025-01-03 Access:  Granted  State: All clear
+Room: ks225 Accessed by: Emergency responder on 2025-01-03 Access:  Denied  State: All clear
+Room: ks220 Accessed by: Ava Thompson on 2025-01-03 Access:  Granted  State: All clear

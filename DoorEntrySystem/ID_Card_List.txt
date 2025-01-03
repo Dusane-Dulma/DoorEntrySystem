@@ -8,8 +8,8 @@ Olivia Davis 2 310987
 Liam Wilson 2 794623
 Isabella Martinez 2 254678
 Ethan Anderson 1 629845
-Emergency responder 5 1
-Emergency responder 5 1
-Emergency responder 5 1
-Emergency responder 5 1
-Emergency responder 5 1
+Emergency responder 6 1
+Emergency responder 6 1
+Emergency responder 6 1
+Emergency responder 6 1
+Emergency responder 6 1
