@@ -10,6 +10,7 @@
 #include <chrono>
 #include <string>
 #include <iomanip>
+#include <algorithm>
 
 using namespace std;
 
@@ -63,7 +64,7 @@ private:
 public: 
     bool inEmergency = false;
     int accesslevel;
-    
+    string roomtype;
     virtual void update(BOOL emstate) override
     {
         inEmergency = emstate;
@@ -108,6 +109,10 @@ public:
     {
         return accesslevel;
     }
+    string getRoomtype()
+    {
+        return roomtype;
+    }
 };
 
 //lecture hall
@@ -116,6 +121,7 @@ public:
 
 
  public:
+     
 
      void update(BOOL emstate) override
      {
@@ -132,10 +138,15 @@ public:
 
      }
      lectureHall(const string x,int y);
+     void setRoomtype()
+     {
+         roomtype = "Lecture Hall";
+     }
  };
  //lecture hall constructor
  lectureHall::lectureHall(string x, int y)
  {
+     setRoomtype();
      setRoomname(x);
      setAccessLevel(y);
  }
@@ -143,6 +154,7 @@ public:
  //staffroom 
  class staffRoom : public room
  {
+     
      void update(BOOL emstate) override
      {
          inEmergency = emstate;
@@ -157,17 +169,24 @@ public:
      {
 
      }
+     void setRoomtype()
+     {
+         roomtype = "Staff room";
+     }
      staffRoom(string x, int y);
  };
  //staffroom constructor
  staffRoom::staffRoom(string x, int y)
  {
+     setRoomtype();
      setRoomname(x);
      setAccessLevel(y);
  }
  //teaching room 
  class teachingRoom : public room
  { public:
+     
+
      void update(BOOL emstate) override
      {
          inEmergency = emstate;
@@ -181,17 +200,23 @@ public:
      {
 
      }
+     void setRoomtype()
+     {
+         roomtype = "Teaching room";
+     }
      teachingRoom(string x, int y);
  };
  //teaching room constructor
  teachingRoom::teachingRoom( string x, int y)
  {
+     setRoomtype();
      setRoomname(x);
      setAccessLevel(y);
  }
  //secure room 
  class secureRoom : public room
  { public:
+     
      void update(BOOL emstate) override
      {
          inEmergency = emstate;
@@ -200,12 +225,16 @@ public:
      {
          accesslevel = y;
      }
-
+     void setRoomtype()
+     {
+         roomtype = "Secure Room";
+     }
      secureRoom(string x, int y);
  };
  //secure room constructor
  secureRoom :: secureRoom(string x, int y)
  {
+     setRoomtype();
      setRoomname(x);
      setAccessLevel(y);
  }
@@ -225,6 +254,7 @@ private:
     int accessLevel;
 
 public:
+
     void setName(string x, string y)
     {
         fname = x;
@@ -298,7 +328,7 @@ class manager : public cardHolder
 
 //student
 class student : public cardHolder 
-{  
+{
 public:
     student();
     student(string fname, string sname, int accesslevel, int colID);
@@ -622,6 +652,8 @@ void writeAccesslog(string roomname, string accessedby, string result, bool stat
     }
 }
 
+bool compareByName(string a, string  b) { return a < b; }
+
 string login;
 // objects
 manager mainman;
@@ -637,7 +669,7 @@ int roomtype = 0;
 string roomname;
 int type;
 string roomlookup;
- 
+vector <string> persons;
 
 int main()
 { 
@@ -647,10 +679,7 @@ int main()
     refreshusers();
     mainman.setName("Phil","Monk"); // first name is login
    
-    
-    
-    
-
+   
     // user chooses function 
 
     
@@ -658,12 +687,13 @@ int main()
     { HOME:
         clrscr();
         cout << "welcome to the college door entry system system" << endl;
-        cout << "Select function: (1) Enter room, (2) Login to setup or (0) to exit: ";
+        cout << "Select function: (1) Enter room, (2) Login to setup, (3) View available rooms, (4) view current card holders or (0) to exit: ";
        // cout << "Currently logged in as: " << login; //test login status
         cin >> type;
+        //simulate enter room
         if (type == 1)
         {
-            cout << "Enter college id";
+            cout << "Enter college id: ";
             int idattempt;
             cin >> idattempt;
             bool idfound = false;
@@ -674,7 +704,7 @@ int main()
                 while (idattempt == currentcard)
                 {
                     idfound = true;
-                    cout << "Enter room number: (ks225)";
+                    cout << "Enter room number: (ks225) ";
                     cin >> roomlookup;
 
                     bool roomfound = false;
@@ -747,8 +777,8 @@ int main()
                     }
                 }
         }           
-    
-        else if (type == 2) // setup new rooms, students or set emergency state to txt file 
+    // setup new rooms, students or set emergency state 
+        else if (type == 2)  
             {
              clrscr();
             cout << "Enter login name: " << endl;
@@ -945,6 +975,48 @@ int main()
 
             
         }
-
+//display current rooms
+        else if (type == 3)
+        {
+            cout << "Current rooms:" << endl;// Note: blank line in .txt file will cause last line to be read again
+            for (int roominfo = 0; roominfo < rooms->size(); roominfo++)
+            {   
+                cout << "Room: " << rooms->at(roominfo).getroomName() << " " << "\tAccess Required: " << rooms->at(roominfo).getRoomAccess() << "\tRoom type: " << rooms->at(roominfo).getRoomtype() << endl;
+            }
+            _getch();
+        }
+        else if (type == 4)
+            for (int findper = 0; findper < cards->size(); findper++)
+            {
+                
+                persons.push_back(cards->at(findper).getfullName());
+               
+            }
+            {
+                sort(persons.begin(), persons.end(),compareByName);
+             cout << "Current Members of college " << endl;
+             if (DEBUG == 1) {
+                 for (int member = 0; member < persons.size(); member++)
+                 {
+                     cout << persons.at(member) << endl;
+                 }
+             }
+            for (int person = 0; person < cards->size(); person++)
+            {
+                string target = persons.at(person);
+                for (int id = 0; id < cards->size(); id++)
+                {
+                    if (cards->at(id).getfullName() == target && cards->at(id).getfullName() != "Emergency responder")
+                    {
+                        cout << "Name: " << cards->at(id).getfullName() << "\t ID: " << cards->at(id).getcollegeID() << "\t Access Level: " << cards->at(id).getAccessLevel() << endl;
+                    }
+                    else
+                        continue;
+                }
+                
+                
+            }
+            _getch();
+        }
     } while (type != 0);
 }
