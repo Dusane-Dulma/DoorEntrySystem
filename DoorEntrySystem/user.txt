@@ -7,9 +7,9 @@ Benjamin Brown 2 543210
 Olivia Davis 2 310987
 Liam Wilson 2 794623
 Isabella Martinez 2 254678
-Ethan Anderson 2 629845
-Emergency responder 5 -
-Emergency responder 5 -
-Emergency responder 5 -
-Emergency responder 5 -
-Emergency responder 5 -
+Ethan Anderson 1 629845
+Emergency responder 5 1
+Emergency responder 5 1
+Emergency responder 5 1
+Emergency responder 5 1
+Emergency responder 5 1
