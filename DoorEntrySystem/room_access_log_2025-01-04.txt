@@ -1,0 +1,4 @@
+Room: ks225 Accessed by: Emergency responder on 2025-01-04 Access:  Denied  State: All clear
+Room: ks220 Accessed by: Eva Thompson on 2025-01-04 Access:  Denied Not Cleaning time State: All clear
+Room: ks220, Accessed by: Isabella Martinez on 2025-01-04, Access:  Granted , State: All clear
+Room: ks220, Accessed by: Eva Thompson on 2025-01-04, Access:  Denied Not Cleaning time, State: All clear
