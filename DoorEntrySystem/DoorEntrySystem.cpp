@@ -20,7 +20,7 @@ using namespace std;
 #define MAXROOMS 20
 #define MAXUSERS 100
 
-
+//function to get current date
 string currentDate()
 {
     chrono::system_clock::time_point now = chrono::system_clock::now();
@@ -37,7 +37,7 @@ class Observer
 public:
     virtual void update(BOOL emstate) = 0;
 };
-
+//emergencystate (Not working)
 class emergencystate
 {
 private:
@@ -64,6 +64,7 @@ public:
         return emstate;
     }
 };
+
 //room setup
 class room : public Observer
 {
@@ -447,6 +448,10 @@ class manager : public cardHolder
             else { cerr << "Unable to open file." << std::endl; }
         }
 
+        bool grantAccess()
+        {
+            return true;
+        }
 
 };
 
@@ -581,6 +586,8 @@ fstream userfile;
 
 
 emergencystate ems;
+
+//function to refresh list of users from file
 void refreshusers()
 {
 
@@ -657,7 +664,7 @@ void refreshusers()
 }
        
 
- 
+ // function to refresh list of rooms from file
 void refreshfile() {
     fstream roomfile;
     roomfile.open("rooms.txt"); // open file
@@ -674,12 +681,14 @@ void refreshfile() {
             roomfile >> tempaccess;
             currentcase = tempaccess;
             //cout << tempname << " " << tempaccess;
+
+            // room assigned by access level
             if (currentcase == 1)
             {
 
                 lectureHall lecturehall(tempname, tempaccess);
                 ptrrooms->push_back(lecturehall);
-                //ems.registerObs(&lecturehall);
+                //ems.registerObs(&lecturehall); // observer function not working 
             }
             else if (currentcase == 2)
             {
@@ -703,7 +712,7 @@ void refreshfile() {
         } while (!roomfile.eof());
         roomfile.close(); //close file
 
-        if (DEBUG == 1) 
+        if (DEBUG == 1) // print out list of incoming rooms
         {
             for (int i = 0; i < ptrrooms->size(); i++)
             {
@@ -722,11 +731,11 @@ void refreshfile() {
 
 
 
-
+//function to write to acces log
 void writeAccesslog(string roomname, string accessedby, string result, bool state)
 {
     string date = currentDate();
-    string logfileName = "room_access_log_" + date + ".txt";
+    string logfileName = "room_access_log_" + date + ".txt"; // create room access log file
 
     string emstate;
     if (state == true)
@@ -739,26 +748,26 @@ void writeAccesslog(string roomname, string accessedby, string result, bool stat
     }
 
     fstream log;
-    log.open(logfileName, ios_base::app);
+    log.open(logfileName, ios_base::app); // open file
     if (log.is_open())
     {
-        log << "Room: " << roomname << ", Accessed by: " << accessedby << " on " << currentDate() << ", Access: " << result << ", State:" << emstate << endl;
+        log << "Room: " << roomname << ", Accessed by: " << accessedby << " on " << currentDate() << ", Access: " << result << ", State:" << emstate << endl; //write line to file
         if (DEBUG == 1)
         {
-            cout << "Log has been written";
+            cout << "Log has been written"; 
             _getch();
         }
-        log.close();
+        log.close(); //close file
     }
     else
     {
-        cerr << "unable to open log";
+        cerr << "unable to open log"; //error handle
     }
 }
 
 bool compareByName(string a, string  b) { return a < b; }
 
-string login;
+
 // objects
 manager mainman;
 student stu("", "", 0, 0);
@@ -773,6 +782,8 @@ string roomname;
 int type;
 string roomlookup;
 vector <string> persons;
+string login;
+bool loggingin = false;
 
 int main()
 {
@@ -781,6 +792,10 @@ int main()
     refreshfile();
     refreshusers();
     mainman.setName("Phil", "Monk"); // first name is login
+    mainman.setAccessLevel(6);
+    mainman.setCollegeID(10);
+   //mainman.addUser(mainman.getfullName(), mainman.getAccessLevel(), mainman.getcollegeID()); // run this line of code to add first manager to card id only needed on intial setup.
+    ptrcards->push_back(mainman);
     int flag = 0;
 
     // user chooses function 
@@ -834,7 +849,7 @@ int main()
                             }
                             else
                             {
-                                if (currentstate == true && ptrcards->at(num).getAccessLevel() != 6 || currentstate == false && ptrcards->at(num).getAccessLevel() == 6)
+                                if (currentstate == true && ptrcards->at(num).getAccessLevel() != 7 || currentstate == false && ptrcards->at(num).getAccessLevel() == 7)
                                 {
                                     cout << "Access denied";
                                     writeAccesslog(roomlookup, ptrcards->at(num).getfullName(), " Denied ", ptrrooms->at(i).isEmergency());
@@ -896,11 +911,20 @@ int main()
             clrscr();
             cout << "Enter login name: " << endl;
             cin >> login;
-            if (login == mainman.getName())  // login required
+            
+            for (int manid = 0; manid < cards.size(); manid++)
+            {
+                if (login == cards.at(manid).getName() && cards.at(manid).getAccessLevel() == 6)
+                {
+                    loggingin = mainman.grantAccess();
+                    break;
+                }
+            }
+            if (loggingin == true)  // login required
             {
                 cout << "Access granted " << endl;
 
-                while (login == mainman.getName())
+                while (loggingin)
                 {
                     int choice;
                     string tempfname;
@@ -962,7 +986,17 @@ int main()
                             guest.setCollegeID(newcollegeID);
                             mainman.addUser(guest.getfullName(), guest.getAccessLevel(), guest.getcollegeID());
                             break;
+                        
                         case 6:
+                            cout << "enter new user's name: ";
+                            cin >> tempfname >> tempsname;
+                            mainman.setName(tempfname, tempsname);
+                            mainman.setAccessLevel(6);
+                            mainman.setCollegeID(10);
+                            mainman.addUser(mainman.getfullName(), mainman.getAccessLevel(), mainman.getcollegeID());
+                            ptrcards->push_back(mainman);
+                            break;
+                        case 7:
                             cout << "enter new user's name: ";
                             cin >> tempfname >> tempsname;
                             emerGuest.setName(tempfname, tempsname);
@@ -971,6 +1005,8 @@ int main()
                             mainman.addUser(emerGuest.getfullName(), emerGuest.getAccessLevel(), emerGuest.getcollegeID());
                             ptrcards->push_back(emerGuest);
                             break;
+
+                        
 
                         }
                     }
@@ -1000,13 +1036,34 @@ int main()
                     //new room
                     else if (choice == 3)
                     {
+                        roomname = "";
                         cout << "enter room type lecturehall (1), Staffroom (2), Teachingroom (3),Secureroom (4) Go back (0): ";
                         cin >> roomtype; // roomtype will determine which kind of room will be created
+                        RETRY:
+                        cout << "enter room name: ";
+                        cin >> roomname;
+                        bool roomis = false;
+                        for (int roomexists = 0; roomexists < rooms.size(); roomexists++)
+                        {
+                            if (roomname == rooms.at(roomexists).getroomName())
+                            {
+                                roomis = true;
+                                break;
+                            }
+                            else
+                                roomis = false;
 
+                        }
+                        if (roomis == true)
+                        {
+                            cout << "That room already exists ";
+                            _getch();
+                            clrscr();
+                            goto RETRY;
+                        }
                         if (roomtype == 1)
                         {
-                            cout << "enter room name: ";
-                            cin >> roomname;
+                            
                             lectureHall lecturehall(roomname, roomtype);
                             ptrrooms->push_back(lecturehall);
                             mainman.writerooms(roomname, roomtype);
@@ -1021,8 +1078,7 @@ int main()
                         }
                         else if (roomtype == 2)
                         {
-                            cout << "enter room name: ";
-                            cin >> roomname;
+                            
                             staffRoom staffroom(roomname, roomtype);
                             ptrrooms->push_back(staffroom);
                             mainman.writerooms(roomname, roomtype);
@@ -1037,8 +1093,7 @@ int main()
                         }
                         else if (roomtype == 3)
                         {
-                            cout << "enter room name: ";
-                            cin >> roomname;
+                           
                             teachingRoom teachingroom(roomname, roomtype);
                             ptrrooms->push_back(teachingroom);
                             mainman.writerooms(roomname, roomtype);
@@ -1053,8 +1108,7 @@ int main()
                         }
                         else if (roomtype == 4)
                         {
-                            cout << "enter room name: ";
-                            cin >> roomname;
+                            
                             secureRoom secureroom(roomname, roomtype);
                             ptrrooms->push_back(secureroom);
                             mainman.writerooms(roomname, roomtype);
@@ -1070,14 +1124,53 @@ int main()
                         else if (roomtype == 0)
                         {
 
-                            login = "Logged out";
+                            loggingin = false;
 
                         }
                     }
                     //update room
                     else if (choice == 4)
                     {
-                        //copy update user
+                        roomname = "";
+                        int roomaccess;
+                        cout << "Enter room name to be updated: ";
+                        string newroomname;
+                        int newaccess;
+                        string roomnameup;
+                        cin >> roomnameup;
+                        for (int rmup = 0; rmup < rooms.size(); rmup++)
+                        {
+                            if (roomnameup == rooms.at(rmup).getroomName())
+                            {
+                                roomname = rooms.at(rmup).getroomName();
+                                roomaccess = rooms.at(rmup).getRoomAccess();
+
+                            }
+                        }
+
+                        cout << "new room name";
+                        cin >> newroomname;
+                        cout << "new access";
+                        cin >> newaccess;
+
+                        if (newroomname != "0")
+                        {
+                            roomname = newroomname;
+                        }
+                        
+                        if (to_string(newaccess) != "0")
+                        {
+                            roomaccess = int(newaccess);
+                        }
+
+
+                        
+                        mainman.updateRoom(roomnameup, "rooms.txt", roomname, roomaccess);
+                        rooms.clear();
+                        ptrrooms->clear();
+                        refreshfile();
+
+                        goto HOME;
                     }
                     // remove room
                     else if (choice == 5)
@@ -1168,7 +1261,7 @@ int main()
                     //log out
                     else if (choice == 0)
                     {
-                        login = "Logged out";
+                        loggingin = false;
                     }
                 }
 
