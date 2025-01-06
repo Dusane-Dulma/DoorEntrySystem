@@ -1,7 +1,7 @@
 //Door entry system
 //Philip monk
 //21/11/2024
-
+#include "pch.h"
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -12,6 +12,8 @@
 #include <iomanip>
 #include <algorithm>
 #include <sstream>
+
+
 
 using namespace std;
 
@@ -31,6 +33,26 @@ string currentDate()
     return string(buffer);
 }
 
+
+string Currenttime() {
+
+    time_t now = time(0);
+
+    tm local_time;
+    localtime_s(&local_time, &now);
+
+    int hour = local_time.tm_hour; 
+    int minute = local_time.tm_min;
+    string am_pm = hour >= 12 ? "PM" : "AM";
+
+    hour = hour % 12;
+    if (hour == 0) hour = 12;
+
+    char buffer[10];
+    sprintf_s(buffer, "%02d:%02d %s", hour, minute, am_pm.c_str());
+    
+    return  string(buffer);
+}
 //observer setup (Not working)
 class Observer
 {
@@ -73,8 +95,8 @@ class room : public Observer
     
 public: 
     string roomName;
-    string cleanstart = "";
-    string cleanend = "";
+    string cleanstart = "08:00 AM";
+    string cleanend = "09:00 PM";
     bool inEmergency = false;
     int accesslevel;
     string roomtype;
@@ -322,8 +344,8 @@ int collegeID;
         tm endTime = {};
         istringstream ssStartTime(startTimeStr);
         istringstream ssEndTime(endTimeStr);
-        ssStartTime >> get_time(&startTime, "%I:%M %p");
-        ssEndTime >> get_time(&endTime, "%I:%M %p");
+        ssStartTime >> get_time(&startTime, "%H:%M %p");
+        ssEndTime >> get_time(&endTime, "%H:%M %p");
         auto now = chrono::system_clock::now();
         time_t now_time = chrono::system_clock::to_time_t(now);
         tm now_tm; 
@@ -805,6 +827,7 @@ int main()
     {
     HOME:
         clrscr();
+        cout << Currenttime();
         cout << "welcome to the college door entry system system" << endl;
         cout << "Select function:" << endl<< "(1) Enter room," << endl << "(2) Login to setup," << endl << "(3) View available rooms," << endl << "(4) view current card holders" << endl << "(0) to exit : ";
         // cout << "Currently logged in as: " << login; //test login status
