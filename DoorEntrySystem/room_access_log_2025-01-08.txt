@@ -1,4 +1,2 @@
-Room: ks220, Accessed by: Eva Thompson on 2025-01-08, Access:  Denied Not Cleaning time, State: All clear
-Room: ks220, Accessed by: Eva Thompson on 2025-01-08, Access:  Denied Not Cleaning time, State: All clear
-Room: ks220, Accessed by: Eva Thompson on 2025-01-08, Access:  Denied Not Cleaning time, State: All clear
-Room: ks220, Accessed by: Eva Thompson on 2025-01-08, Access:  Granted , State: All clear
+Room: Testroom, Accessed by: Tester 1 on 2025-01-08, Access: Granted, State: All clear
+Room: Testroom, Accessed by: Tester 1 on 2025-01-08, Access: Granted, State: All clear

@@ -24,7 +24,7 @@ bool Cleaningtime(const string& startTimeStr, const string& endTimeStr);
 namespace doorentrytest
 {
 	TEST_CLASS(doorentrytest) {
-public: TEST_METHOD(TestWithinTimeslot) 
+   TEST_METHOD(TestWithinTimeslot) 
 { // Arrange 
 	string startTime = "00:00 am";
 	string endTime = "11:00 pm"; 

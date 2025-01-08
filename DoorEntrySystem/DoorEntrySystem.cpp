@@ -91,8 +91,6 @@ public:
 class room : public Observer
 {
     
-   
-    
 public: 
     string roomName;
     string cleanstart = "14:00";
@@ -104,8 +102,6 @@ public:
     {
         inEmergency = emstate;
     }
-
-    void setAccessLevel(int y);
 
     void setRoomname(string x)
     {
@@ -807,36 +803,68 @@ void runTest() // function to run test
     ::testing::InitGoogleTest(&argc, argv);
     RUN_ALL_TESTS();
 }
-    // test attributes
+    // test suite attributes
     class CardHolderTest : public ::testing::Test {
     protected:
         cardHolder testuser;
     };
 
+    class writeAccessLogTest : public ::testing::Test
+    {
+    protected:
+        lectureHall testroom{"Testroom",1};
+        student testuser1{"Tester","1",1,001};
+    };
 
+    // set card holder name
     TEST_F(CardHolderTest, setName)
     {
-        testuser.setName("Phil", "Monk");
-        EXPECT_EQ(testuser.getName(), "Phil");
-        EXPECT_EQ(testuser.getSName(), "Monk");
+        testuser.setName("Phil", "Monk"); // sets up first and surname
+        EXPECT_EQ(testuser.getName(), "Phil"); // call first name
+        EXPECT_EQ(testuser.getSName(), "Monk");// call surname
+        EXPECT_EQ(testuser.getfullName(), "Phil Monk"); // call combined name
     }
    
     TEST_F(CardHolderTest, ValidTimeRangecleaningtime) 
     { 
         cardHolder testuser2;
-        string startTime = "09:00";
-        string endTime = "15:00"; 
-        string timeattest = Currenttime();
+        string startTime = "09:00"; // setup cleaning start time note must preceed current time 
+        string endTime = "15:00";  // setup cleaning end time must come after current time
+        string timeattest = Currenttime(); 
         ASSERT_TRUE(testuser2.Cleaningtime(startTime, endTime,Currenttime())) << "The current time should be within the cleaning time range."; } 
     
     TEST_F(CardHolderTest, InvalidTimeRangecleaningtime) 
     {
         cardHolder testuser2;
-        string outstartTime = "06:00";
+        string outstartTime = "06:00"; 
         string outendTime = "07:00"; 
+        // start and end range must not include current time
         EXPECT_FALSE(testuser2.Cleaningtime(outstartTime, outendTime,Currenttime()))<<"Current time: "<<Currenttime() << " The current time should not be within the cleaning time range." << outstartTime << " " << outendTime;
         // test exposed failure in cleaning time function 
     }
+
+    TEST_F(writeAccessLogTest, logentry)
+    {
+        // redirect console to string to capture output
+        ostringstream oss;
+        streambuf* coutbuf = cout.rdbuf(); // save old buffer
+        cout.rdbuf(oss.rdbuf()); // redirect cout
+
+        //test function
+        writeAccesslog(testroom.getroomName(), testuser1.getfullName(), "Granted", testroom.isEmergency());
+
+        // cout to back to standard output
+        cout.rdbuf(coutbuf);
+
+        ifstream logfile("room_access_log_2025-01-08.txt");
+        string logentry;
+        getline(logfile, logentry); // read log entry
+        //change date to date of test being run
+        EXPECT_EQ(logentry, "Room: Testroom, Accessed by: Tester 1 on 2025-01-08, Access: Granted, State: All Clear");
+
+    }
+        
+
 
 // objects
 manager mainman;
@@ -1406,3 +1434,5 @@ int main()
 
 
 }
+
+
