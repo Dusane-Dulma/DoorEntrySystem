@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Observer">
+    <Position X="14" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>DoorEntrySystem.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="emergencystate">
+    <Position X="16.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIBEAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAQAAAAEA=</HashCode>
+      <FileName>DoorEntrySystem.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="room">
+    <Position X="11.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAIBAQABAAgCAAAAAAAAAAAAAAEAgAAAMBAAIhAEAAA=</HashCode>
+      <FileName>DoorEntrySystem.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="lectureHall">
+    <Position X="15" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQABAAAAAIIAAAAAAAAAAAACAAAAIAAAAAAEAAA=</HashCode>
+      <FileName>DoorEntrySystem.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="staffRoom">
+    <Position X="8.25" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQABAAAAAAIAAAAAAAAAAAACAAAAIAAAAAAGAAA=</HashCode>
+      <FileName>DoorEntrySystem.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="teachingRoom">
+    <Position X="10.5" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQABAAAAAAIAAAAAAAAAAAACAAAAIAAAAAAkAAA=</HashCode>
+      <FileName>DoorEntrySystem.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="secureRoom">
+    <Position X="12.75" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQABAAAAAAIAAAAAAAAAAAAAAAgAIAAAAAAEAAA=</HashCode>
+      <FileName>DoorEntrySystem.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cardHolder">
+    <Position X="6.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAYAQAAAAAAAAAAAAgAAAIAAAAAMABIAgAEAAAAgAA=</HashCode>
+      <FileName>DoorEntrySystem.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EResponer">
+    <Position X="9.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DoorEntrySystem.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="security">
+    <Position X="6.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAA=</HashCode>
+      <FileName>DoorEntrySystem.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cleaner">
+    <Position X="4" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DoorEntrySystem.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="visitor">
+    <Position X="10.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DoorEntrySystem.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="staffMember">
+    <Position X="8" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>DoorEntrySystem.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="student">
+    <Position X="5.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DoorEntrySystem.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="manager">
+    <Position X="2.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAgAAAAEAAAIAAAEQAAIAAAIAAAAAA=</HashCode>
+      <FileName>DoorEntrySystem.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

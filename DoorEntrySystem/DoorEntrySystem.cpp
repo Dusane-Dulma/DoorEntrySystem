@@ -1,6 +1,8 @@
 //Door entry system
 //Philip monk
 //21/11/2024
+
+
 #include "pch.h"
 #include <iostream>
 #include <fstream>
@@ -12,12 +14,13 @@
 #include <iomanip>
 #include <algorithm>
 #include <sstream>
+#include <gtest/gtest.h>
 
 
 
 using namespace std;
 
-#define DEBUG 0
+#define DEBUG 1
 #define ESC 27
 #define MAXROOMS 20
 #define MAXUSERS 100
@@ -34,25 +37,22 @@ string currentDate()
 }
 
 
-string Currenttime() {
-
+//currenttime
+std::string Currenttime() {
     time_t now = time(0);
-
     tm local_time;
     localtime_s(&local_time, &now);
 
-    int hour = local_time.tm_hour; 
+    int hour = local_time.tm_hour;
     int minute = local_time.tm_min;
-    string am_pm = hour >= 12 ? "PM" : "AM";
 
-    hour = hour % 12;
-    if (hour == 0) hour = 12;
+    std::ostringstream oss;
+    oss << std::setfill('0') << std::setw(2) << hour << ":"
+        << std::setfill('0') << std::setw(2) << minute;
 
-    char buffer[10];
-    sprintf_s(buffer, "%02d:%02d %s", hour, minute, am_pm.c_str());
-    
-    return  string(buffer);
+    return oss.str();
 }
+
 //observer setup (Not working)
 class Observer
 {
@@ -95,8 +95,8 @@ class room : public Observer
     
 public: 
     string roomName;
-    string cleanstart = "08:00 AM";
-    string cleanend = "09:00 PM";
+    string cleanstart = "14:00";
+    string cleanend = "16:00";
     bool inEmergency = false;
     int accesslevel;
     string roomtype;
@@ -338,22 +338,29 @@ int collegeID;
     {
         return collegeID;
     }
-    bool Cleaningtime(const string& startTimeStr, const string& endTimeStr)
+    bool Cleaningtime(const string& startTimeStr, const string& endTimeStr, const string& currentTimeStr)
     {
-        tm startTime = {};
-        tm endTime = {};
+        int startHour, endHour, currentHour;
+     
         istringstream ssStartTime(startTimeStr);
         istringstream ssEndTime(endTimeStr);
-        ssStartTime >> get_time(&startTime, "%H:%M %p");
-        ssEndTime >> get_time(&endTime, "%H:%M %p");
-        auto now = chrono::system_clock::now();
-        time_t now_time = chrono::system_clock::to_time_t(now);
-        tm now_tm; 
-        localtime_s(&now_tm, &now_time);
-        return mktime(&now_tm) >= mktime(&startTime) && mktime(&now_tm) <= mktime(&endTime);
+        istringstream ssCurrentTime(currentTimeStr);
+        ssStartTime >> startHour;
+        ssEndTime >> endHour;
+        ssCurrentTime >> currentHour;
+        
+               
+        if (currentHour >= startHour && currentHour <= endHour)
+        {
+            return true;
+        }
+        else
+            return false;
     }
 
 };
+
+
 // manager
 class manager : public cardHolder 
 {
@@ -790,6 +797,47 @@ void writeAccesslog(string roomname, string accessedby, string result, bool stat
 bool compareByName(string a, string  b) { return a < b; }
 
 
+
+//Testing using Gtest
+
+void runTest() // function to run test 
+{
+    int argc = 1;
+    char* argv[1] = { (char*)"tests" };
+    ::testing::InitGoogleTest(&argc, argv);
+    RUN_ALL_TESTS();
+}
+    // test attributes
+    class CardHolderTest : public ::testing::Test {
+    protected:
+        cardHolder testuser;
+    };
+
+
+    TEST_F(CardHolderTest, setName)
+    {
+        testuser.setName("Phil", "Monk");
+        EXPECT_EQ(testuser.getName(), "Phil");
+        EXPECT_EQ(testuser.getSName(), "Monk");
+    }
+   
+    TEST_F(CardHolderTest, ValidTimeRangecleaningtime) 
+    { 
+        cardHolder testuser2;
+        string startTime = "09:00";
+        string endTime = "15:00"; 
+        string timeattest = Currenttime();
+        ASSERT_TRUE(testuser2.Cleaningtime(startTime, endTime,Currenttime())) << "The current time should be within the cleaning time range."; } 
+    
+    TEST_F(CardHolderTest, InvalidTimeRangecleaningtime) 
+    {
+        cardHolder testuser2;
+        string outstartTime = "06:00";
+        string outendTime = "07:00"; 
+        EXPECT_FALSE(testuser2.Cleaningtime(outstartTime, outendTime,Currenttime()))<<"Current time: "<<Currenttime() << " The current time should not be within the cleaning time range." << outstartTime << " " << outendTime;
+        // test exposed failure in cleaning time function 
+    }
+
 // objects
 manager mainman;
 student stu("", "", 0, 0);
@@ -809,6 +857,11 @@ bool loggingin = false;
 
 int main()
 {
+    if (DEBUG == 1)
+    {
+        runTest();
+    }
+
     srand(time(0));
     int newcollegeID = rand() % 900000 + 100000;// generate random 6 digit number
     refreshfile();
@@ -863,7 +916,7 @@ int main()
 
                             roomfound = true;
                             //cout << "loop " << i;
-                            if (ptrcards->at(num).getAccessLevel() == 3 && !ptrcards->at(num).Cleaningtime(ptrrooms->at(i).getcleaningstime(), ptrrooms->at(i).getcleaningetime()))
+                            if (ptrcards->at(num).getAccessLevel() == 3 && !ptrcards->at(num).Cleaningtime(ptrrooms->at(i).getcleaningstime(), ptrrooms->at(i).getcleaningetime(),Currenttime()))
                             {
                                 cout << "Not Cleaning time";
                                 writeAccesslog(roomlookup, ptrcards->at(num).getfullName(), " Denied Not Cleaning time", ptrrooms->at(i).isEmergency());
@@ -1350,4 +1403,6 @@ int main()
         
         
     } while (type != 0);
+
+
 }

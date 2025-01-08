@@ -23,4 +23,7 @@
     <Text Include="rooms.txt" />
     <Text Include="ID_Card_List.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
 </Project>
