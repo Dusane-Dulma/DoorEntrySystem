@@ -790,9 +790,31 @@ void writeAccesslog(string roomname, string accessedby, string result, bool stat
     }
 }
 
-bool compareByName(string a, string  b) { return a < b; }
+bool compareByName(string a, string  b) 
+{
+    return a < b; 
+}
 
+int newCollegeID()
+{
+    srand(time(0));
+    int newcollegeID = rand() % 900000 + 100000;
+        
+    for (int card = 0; card < ptrcards->size(); card++)
+    {
+        if (ptrcards->at(card).getcollegeID() != newcollegeID)
+        {
+            continue;
+        }
+        else
+        {
+            newcollegeID = rand() % 900000 + 100000;
+            card = 0;
+        }
+    }
+    return newcollegeID;
 
+}
 
 //Testing using Gtest
 
@@ -815,6 +837,8 @@ void runTest() // function to run test
         lectureHall testroom{"Testroom",1};
         student testuser1{"Tester","1",1,001};
     };
+
+       
 
     // set card holder name
     TEST_F(CardHolderTest, setName)
@@ -855,15 +879,14 @@ void runTest() // function to run test
 
         // cout to back to standard output
         cout.rdbuf(coutbuf);
-
-        ifstream logfile("room_access_log_2025-01-08.txt");
+        //change date to date of test being run
+        ifstream logfile("room_access_log_2025-01-09.txt");
         string logentry;
         getline(logfile, logentry); // read log entry
         //change date to date of test being run
-        EXPECT_EQ(logentry, "Room: Testroom, Accessed by: Tester 1 on 2025-01-08, Access: Granted, State: All Clear");
-
+        EXPECT_EQ(logentry, "Room: Testroom, Accessed by: Tester 1 on 2025-01-09, Access: Granted, State: All clear");
     }
-        
+
 
 
 // objects
@@ -890,8 +913,10 @@ int main()
         runTest();
     }
 
-    srand(time(0));
-    int newcollegeID = rand() % 900000 + 100000;// generate random 6 digit number
+    
+    
+    
+
     refreshfile();
     refreshusers();
     mainman.setName("Phil", "Monk"); // first name is login
@@ -1033,13 +1058,13 @@ int main()
                     int choice;
                     string tempfname;
                     string tempsname;
-                    cout << "1 user setup, " << endl <<"2 emergency," << endl << "3 room setup," <<endl << "4 update room," << endl << "5 remove room," << endl << "6 remove user," << endl << "7 update user, " << endl << "8 view daily entry log," << endl << " 0 to go back: ";
+                    cout << "(1) User setup, " << endl <<"(2) Emergency Setup," << endl << "(3) Room setup," <<endl << "(4) Update room," << endl << "(5) Remove room," << endl << "(6) Remove user," << endl << "(7) Update user, " << endl << "(8) View daily entry log," << endl << " (0) Go back: ";
                     cin >> choice;
                     clrscr();
                     //new cardholder
                     if (choice == 1)
                     {
-                        cout << "New cardholder type"; //expand menu 
+                        cout << "New cardholder type: (1) Student, (2) Teaching Staff, (3) Contract Cleaner, (4) Security, (5) Visitor, (6) Manager, (7) Emergency Responder: "; //expand menu 
                         cin >> choice;
                         switch (choice)
                         {
@@ -1048,7 +1073,7 @@ int main()
                             cin >> tempfname >> tempsname;
                             stu.setName(tempfname, tempsname);
                             stu.setAccessLevel(choice);
-                            stu.setCollegeID(newcollegeID);
+                            stu.setCollegeID(newCollegeID());
                             mainman.addUser(stu.getfullName(), stu.getAccessLevel(), stu.getcollegeID());
                             ptrcards->push_back(stu);
                             break;
@@ -1058,7 +1083,7 @@ int main()
                             cin >> tempfname >> tempsname;
                             staff.setName(tempfname, tempsname);
                             staff.setAccessLevel(choice);
-                            staff.setCollegeID(newcollegeID);
+                            staff.setCollegeID(newCollegeID());
                             mainman.addUser(staff.getfullName(), staff.getAccessLevel(), staff.getcollegeID());
                             ptrcards->push_back(staff);
                             break;
@@ -1068,7 +1093,7 @@ int main()
                             cin >> tempfname >> tempsname;
                             cClean.setName(tempfname, tempsname);
                             cClean.setAccessLevel(choice);
-                            cClean.setCollegeID(newcollegeID);
+                            cClean.setCollegeID(newCollegeID());
                             mainman.addUser(cClean.getfullName(), cClean.getAccessLevel(), cClean.getcollegeID());
                             ptrcards->push_back(cClean);
                             break;
@@ -1078,7 +1103,7 @@ int main()
                             cin >> tempfname >> tempsname;
                             secGuard.setName(tempfname, tempsname);
                             secGuard.setAccessLevel(choice);
-                            secGuard.setCollegeID(newcollegeID);
+                            secGuard.setCollegeID(newCollegeID());
                             mainman.addUser(secGuard.getfullName(), secGuard.getAccessLevel(), secGuard.getcollegeID());
                             ptrcards->push_back(secGuard);
                             break;
@@ -1087,7 +1112,7 @@ int main()
                             cin >> tempfname >> tempsname;
                             guest.setName(tempfname, tempsname);
                             guest.setAccessLevel(choice);
-                            guest.setCollegeID(newcollegeID);
+                            guest.setCollegeID(newCollegeID());
                             mainman.addUser(guest.getfullName(), guest.getAccessLevel(), guest.getcollegeID());
                             break;
                         
@@ -1147,6 +1172,7 @@ int main()
                         cout << "enter room name: ";
                         cin >> roomname;
                         bool roomis = false;
+                        // check if room already exists on the list rooms.
                         for (int roomexists = 0; roomexists < rooms.size(); roomexists++)
                         {
                             if (roomname == rooms.at(roomexists).getroomName())
@@ -1244,7 +1270,7 @@ int main()
                         cin >> roomnameup;
                         for (int rmup = 0; rmup < rooms.size(); rmup++)
                         {
-                            if (roomnameup == rooms.at(rmup).getroomName())
+                            if (roomnameup == rooms.at(rmup).getroomName())// lookup room from vector
                             {
                                 roomname = rooms.at(rmup).getroomName();
                                 roomaccess = rooms.at(rmup).getRoomAccess();
@@ -1357,7 +1383,7 @@ int main()
                     // view daily entry log
                     else if (choice == 8)
                     {
-                        mainman.viewLog();
+                        mainman.viewLog(); // view log function
                         _getch();
                         clrscr();
                         continue;
