@@ -1,0 +1,6 @@
+Room: Testroom, Accessed by: Tester 1 on 2025-01-10, Access: Granted, State: All clear
+Room: ks220, Accessed by: Eva Thompson on 2025-01-10, Access:  Denied Not Cleaning time, State: All clear
+Room: ks220, Accessed by: Phil Monk on 2025-01-10, Access:  Granted , State: All clear
+Room: ks220, Accessed by: Phil Monk on 2025-01-10, Access:  Denied , State: Emergency
+Room: ks220, Accessed by: Phil Monk on 2025-01-10, Access:  Granted , State: All clear
+Room: ks220, Accessed by: Phil Monk on 2025-01-10, Access:  Granted , State: All clear

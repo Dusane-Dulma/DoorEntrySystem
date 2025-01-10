@@ -20,7 +20,7 @@
 
 using namespace std;
 
-#define DEBUG 1
+#define DEBUG 0
 #define ESC 27
 #define MAXROOMS 20
 #define MAXUSERS 100
@@ -919,11 +919,13 @@ int main()
 
     refreshfile();
     refreshusers();
-    mainman.setName("Phil", "Monk"); // first name is login
-    mainman.setAccessLevel(6);
-    mainman.setCollegeID(10);
+
+    // uncomment the next five lines if no .txt files are setup
+    //mainman.setName("Phil", "Monk"); // first name is login
+    //mainman.setAccessLevel(6);
+    //mainman.setCollegeID(10);
    //mainman.addUser(mainman.getfullName(), mainman.getAccessLevel(), mainman.getcollegeID()); // run this line of code to add first manager to card id only needed on intial setup.
-    ptrcards->push_back(mainman);
+   // ptrcards->push_back(mainman);
     int flag = 0;
 
     // user chooses function 
@@ -933,7 +935,7 @@ int main()
     {
     HOME:
         clrscr();
-        cout << Currenttime();
+        cout << Currenttime() << endl;
         cout << "welcome to the college door entry system system" << endl;
         cout << "Select function:" << endl<< "(1) Enter room," << endl << "(2) Login to setup," << endl << "(3) View available rooms," << endl << "(4) view current card holders" << endl << "(0) to exit : ";
         // cout << "Currently logged in as: " << login; //test login status
