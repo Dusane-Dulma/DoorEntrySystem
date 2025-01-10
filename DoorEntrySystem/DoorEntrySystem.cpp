@@ -936,7 +936,7 @@ int main()
     HOME:
         clrscr();
         cout << Currenttime() << endl;
-        cout << "welcome to the college door entry system system" << endl;
+        cout << "welcome to the college door entry system" << endl;
         cout << "Select function:" << endl<< "(1) Enter room," << endl << "(2) Login to setup," << endl << "(3) View available rooms," << endl << "(4) view current card holders" << endl << "(0) to exit : ";
         // cout << "Currently logged in as: " << login; //test login status
         cin >> type;
@@ -1145,14 +1145,30 @@ int main()
                     else if (choice == 2)
                     {
                         char emergency;
-                        cout << "Change emergency State? Y/N";
+                        if (ptrrooms->at(0).isEmergency() == true)
+                        {
+                            cout << "Rooms are in emergency" << endl;
+                        }
+                        else
+                        {
+                            cout << "No Emergency" << endl;
+                        }
+                        cout << "Change emergency State? Y/N" << endl;
                         cin >> emergency;
                         //set emergency state
                         if (emergency == 'y')
+                        {
                             for (int emr = 0; emr < ptrrooms->size(); emr++)
                             {
                                 ptrrooms->at(emr).updateRoomEmerStat();
                             }
+                            if (ptrrooms->at(0).isEmergency() == true)
+                            {
+                                cout << "Rooms are in emergency";
+                            }
+                            else
+                                cout << "No Emergency";
+                        }
                         else if (emergency == 'n')
                             goto HOME;
 
